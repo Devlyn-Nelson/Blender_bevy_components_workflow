@@ -101,7 +101,13 @@ fn process_background_shader(
         };
         let dimension = TextureDimension::D2;
         const SIDES_PER_CUBE: usize = 6;
-        let data: Vec<_> = iter::repeat(background_shader.color.as_rgba_u8())
+        let [r, g, b, a] = background_shader.color.to_srgba().to_f32_array();
+        let data: Vec<_> = iter::repeat([
+            (r * u8::MAX as f32) as u8,
+            (g * u8::MAX as f32) as u8,
+            (b * u8::MAX as f32) as u8,
+            (a * u8::MAX as f32) as u8,
+        ])
             .take(SIDES_PER_CUBE)
             .flatten()
             .collect();
@@ -122,19 +128,19 @@ fn process_background_shader(
     // Don't need the handle to be &mut
     let env_map_handle = &*env_map_handle;
 
-    if background_shader.is_added() {
-        // We're using an environment map, so we don't need the ambient light
-        commands.remove_resource::<AmbientLight>();
-    }
+    // if background_shader.is_added() {
+    //     // We're using an environment map, so we don't need the ambient light
+    //     commands.remove_resource::<AmbientLight>();
+    // }
 
-    let is_bg_outdated = background_shader.is_changed();
-    if is_bg_outdated {
-        let color = background_shader.color * background_shader.strength;
-        commands.insert_resource(ClearColor(color));
-    }
+    // let is_bg_outdated = background_shader.is_changed();
+    // if is_bg_outdated {
+    //     let color = background_shader.color * background_shader.strength;
+    //     commands.insert_resource(ClearColor(color));
+    // }
     let camera_entities = cameras
         .iter()
-        .filter_map(|(entity, cam)| (is_bg_outdated || cam.is_changed()).then_some(entity));
+        .filter_map(|(entity, cam)| (/*is_bg_outdated ||*/ cam.is_changed()).then_some(entity));
 
     for camera_entity in camera_entities {
         // See https://github.com/KhronosGroup/glTF-Blender-IO/blob/8573cc0dfb612091bfc1bcf6df55c18a44b9668a/addons/io_scene_gltf2/blender/com/gltf2_blender_conversion.py#L19

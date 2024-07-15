@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
+use bevy::{gltf::Gltf, prelude::*, utils::hashbrown::HashMap};
 
 use crate::{Animations, BluePrintsConfig};
 
@@ -280,7 +280,9 @@ pub(crate) fn spawn_from_blueprints(
                 ..Default::default()
             },
             Animations {
-                named_animations: gltf.named_animations.clone(),
+                named_animations: HashMap::default(),
+                // named_animations: gltf.named_animations.clone(),
+                
             },
             Spawned,
             OriginalChildren(original_children),

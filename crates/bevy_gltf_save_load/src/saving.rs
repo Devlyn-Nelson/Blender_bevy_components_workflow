@@ -146,8 +146,9 @@ pub(crate) fn save_game(world: &mut World) {
     dyn_scene.entities.append(&mut dyn_scene_root.entities);
     // dyn_scene.resources.append(&mut dyn_scene_root.resources);
 
+    let reg = world.resource::<AppTypeRegistry>().read();
     let serialized_scene = dyn_scene
-        .serialize_ron(world.resource::<AppTypeRegistry>())
+        .serialize(&reg)
         .unwrap();
 
     let save_path = Path::new("assets")

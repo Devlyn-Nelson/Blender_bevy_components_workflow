@@ -172,16 +172,16 @@ pub(crate) fn materials_inject2(
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
-            if mat_gltf.named_materials.contains_key(material_name) {
-                let material = mat_gltf
-                    .named_materials
-                    .get(material_name)
-                    .expect("this material should have been loaded");
-                blueprints_config
-                    .material_library_cache
-                    .insert(material_full_path, material.clone());
-                material_found = Some(material);
-            }
+            // if mat_gltf.named_materials.contains_key(material_name) {
+            //     let material = mat_gltf
+            //         .named_materials
+            //         .get(material_name)
+            //         .expect("this material should have been loaded");
+            //     blueprints_config
+            //         .material_library_cache
+            //         .insert(material_full_path, material.clone());
+            //     material_found = Some(material);
+            // }
         }
 
         if let Some(material) = material_found {
