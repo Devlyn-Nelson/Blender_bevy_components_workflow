@@ -14,7 +14,7 @@ use bevy::{
     log::debug,
     pbr::StandardMaterial,
     reflect::Reflect,
-    render::mesh::Mesh,
+    render::mesh::Mesh, utils::hashbrown::Equivalent,
 };
 
 use crate::{AssetLoadTracker, AssetsToLoad, BluePrintsConfig};
@@ -168,20 +168,21 @@ pub(crate) fn materials_inject2(
                 .expect("we should have the material available");
             material_found = Some(material);
         } else {
+            let fixed_material_name = StringFix(material_name);
             let model_handle: Handle<Gltf> = asset_server.load(materials_path.clone()); // FIXME: kinda weird now
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
-            // if mat_gltf.named_materials.contains_key(material_name) {
-            //     let material = mat_gltf
-            //         .named_materials
-            //         .get(material_name)
-            //         .expect("this material should have been loaded");
-            //     blueprints_config
-            //         .material_library_cache
-            //         .insert(material_full_path, material.clone());
-            //     material_found = Some(material);
-            // }
+            if mat_gltf.named_materials.contains_key(&fixed_material_name) {
+                let material = mat_gltf
+                    .named_materials
+                    .get(&fixed_material_name)
+                    .expect("this material should have been loaded");
+                blueprints_config
+                    .material_library_cache
+                    .insert(material_full_path, material.clone());
+                material_found = Some(material);
+            }
         }
 
         if let Some(material) = material_found {
@@ -197,5 +198,14 @@ pub(crate) fn materials_inject2(
                 }
             }
         }
+    }
+}
+
+#[derive(Hash)]
+pub struct StringFix<'a>(&'a String);
+
+impl<'a> Equivalent<Box<str>> for StringFix<'a> {
+    fn equivalent(&self, key: &Box<str>) -> bool {
+        (self.0.as_str()) == key.as_ref()
     }
 }

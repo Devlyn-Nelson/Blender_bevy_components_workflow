@@ -1,12 +1,6 @@
 [workspace]
 members = [
     "crates/*",
-    "examples/common*",
-    "examples/bevy_gltf_components/*",
-    "examples/bevy_gltf_blueprints/*",
-    "examples/bevy_gltf_save_load/*",
-    "examples/bevy_registry_export/*",
-    "testing/bevy_example/",
 ]
 resolver = "2"
 
